@@ -1,0 +1,58 @@
+{
+	"name": "ExamsInput",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "exams.csv",
+				"folderPath": "Input",
+				"container": "data"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "gender",
+				"type": "String"
+			},
+			{
+				"name": "race/ethnicity",
+				"type": "String"
+			},
+			{
+				"name": "parental level of education",
+				"type": "String"
+			},
+			{
+				"name": "lunch",
+				"type": "String"
+			},
+			{
+				"name": "test preparation course",
+				"type": "String"
+			},
+			{
+				"name": "math score",
+				"type": "String"
+			},
+			{
+				"name": "reading score",
+				"type": "String"
+			},
+			{
+				"name": "writing score",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

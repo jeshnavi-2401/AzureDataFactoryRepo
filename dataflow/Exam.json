@@ -1,0 +1,86 @@
+{
+	"name": "Exam",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ExamsInput",
+						"type": "DatasetReference"
+					},
+					"name": "Exam"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "GenderAvgScore",
+						"type": "DatasetReference"
+					},
+					"name": "ScoreByGender",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureBlobStorage1",
+						"type": "LinkedServiceReference"
+					}
+				},
+				{
+					"dataset": {
+						"referenceName": "ExamCourseCompleted",
+						"type": "DatasetReference"
+					},
+					"name": "CourseCompleted",
+					"rejectedDataLinkedService": {
+						"referenceName": "AzureBlobStorage1",
+						"type": "LinkedServiceReference"
+					}
+				}
+			],
+			"transformations": [
+				{
+					"name": "CourseCompletionCount"
+				},
+				{
+					"name": "AvgScoreByGender"
+				},
+				{
+					"name": "AddingStatusColumn"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          gender as string,",
+				"          {race/ethnicity} as string,",
+				"          {parental level of education} as string,",
+				"          lunch as string,",
+				"          {test preparation course} as string,",
+				"          {math score} as short,",
+				"          {reading score} as short,",
+				"          {writing score} as short",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Exam",
+				"Exam aggregate(groupBy({test preparation course}),",
+				"     Count = count({test preparation course})) ~> CourseCompletionCount",
+				"Exam aggregate(groupBy(gender),",
+				"     {Math Avg} = avg({math score}),",
+				"          {Read Avg} = avg({reading score}),",
+				"          {Write Avg} = avg({writing score})) ~> AvgScoreByGender",
+				"Exam derive({Pass/Fail} = iif({math score}>=45&&{reading score}>=45&&{writing score}>=45,\"Pass\",\"Fail\")) ~> AddingStatusColumn",
+				"AvgScoreByGender sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Avg Score By Gender'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> ScoreByGender",
+				"CourseCompletionCount sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['Course Completed'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> CourseCompleted"
+			]
+		}
+	}
+}

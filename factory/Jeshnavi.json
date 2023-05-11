@@ -1,0 +1,9 @@
+{
+	"name": "Jeshnavi",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "0932e693-0904-45d5-a486-7edb69a0ed88",
+		"tenantId": "c28493c1-389d-43f5-903e-cc824a501e67"
+	}
+}
